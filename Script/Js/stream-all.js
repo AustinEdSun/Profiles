@@ -1,4 +1,4 @@
-/*模板来自LucaLin233大佬（转大佬感谢：感谢@asukanana,感谢@congcong.）。*/
+/*模板来自LucaLin233大佬。*/
 
 const REQUEST_HEADERS = {
     'User-Agent':
