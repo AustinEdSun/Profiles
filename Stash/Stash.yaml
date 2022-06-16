@@ -1,0 +1,265 @@
+# Stash 配置
+
+# Port of HTTP(S) 本地代理服务器
+#port: 7890
+
+# Port of SOCKS5 本地代理服务器
+#socks-port: 7891
+
+# HTTP(S) and SOCKS4(A)/SOCKS5 服务器在同一个端口
+mixed-port: 7890
+
+# 设置为 true 以允许从本地连接到本地服务器
+allow-lan: false
+# 这仅在 allow-lan 为 true 时适用
+# '*': 绑定所有IP地址
+bind-address: '*'
+
+# 规则模式：rule（规则） / global（全局代理）/ direct（全局直连）
+mode: rule
+
+# 设置日志输出级别 (默认级别：silent，即不输出任何内容，以避免因日志内容过大而导致程序内存溢出）。
+# 5 个级别：silent / info / warning / error / debug。级别越高日志输出量越大，越倾向于调试，若需要请自行开启。
+log-level: warning
+# 当设置为 false 时，解析器不会将主机名转换为 IPv6 地址
+ipv6: false
+
+# RESTful Web API 监听地址
+external-controller: 127.0.0.1:9090
+
+# DNS设置
+dns:
+  enable: true
+  listen: 0.0.0.0:53
+  # 这些名称服务器用于解析下面的 DNS 名称服务器主机名。
+  # 仅指定 IP 地址
+  default-nameserver:
+    - 119.29.29.29
+    - 223.5.5.5
+  # DoH服务器
+  nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.dns.sb/dns-query
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  # 列表中的域名将不会被解析为fake ip，这些域名相关的解析请求将会返回它们真实的IP地址
+  fake-ip-filter:
+    - '*.lan'
+    - localhost.ptlogin2.qq.com
+    - '+.srv.nintendo.net'
+    - '+.stun.playstation.net'
+    - '+.msftconnecttest.com'
+    - '+.msftncsi.com'
+    - '+.xboxlive.com'
+    - 'msftconnecttest.com'
+    - 'xbox.*.microsoft.com'
+    - '*.battlenet.com.cn'
+    - '*.battlenet.com'
+    - '*.blzstatic.cn'
+    - '*.battle.net'
+
+# 本地代理
+proxies:
+
+# 远程订阅(代理集合)
+proxy-providers:
+
+  Texon: 
+    url: 机场订阅地址
+    interval: 86400
+    health-check:
+      enable: true
+      interval: 3600
+      url: http://cp.cloudflare.com/generate_204
+      
+  # 手动选择
+  MyProxy: &Stash #建立锚点
+     #多机场用户请使用Sub-Store生成自己的订阅地址并替换以下url地址
+    url: https://sub.store/download/collection/Stash
+    interval: 86400
+    health-check:
+      enable: true
+      interval: 3600
+      url: http://cp.cloudflare.com/generate_204
+  
+  # 故障切换
+  MyProxy-Fallback:
+    <<: *Stash #引用锚点内容
+    filter: "香港|HK|Hong Kong|日本|JP|Japan"
+  
+  # 国际流媒体服务
+  MyProxy-Streaming:
+    <<: *Stash #引用锚点内容
+    filter: "新加坡|狮城|SG|Singapore|香港|HK|Hong Kong|日本|JP|Japan"
+  
+  # 中国流媒体服务（面向海外版本）
+  MyProxy-StreamingSE:
+    <<: *Stash #引用锚点内容
+    filter: "香港|HK|Hong Kong|台湾|TW|Taiwan"
+  
+#策略组
+proxy-groups:
+
+- name: Option
+  type: select
+  proxies:
+  - Fallback
+  - NodeList
+  - DIRECT
+  icon: https://raw.githubusercontent.com/Orz-3/mini/master/Color/Urltest.png
+
+- name: NodeList
+  type: select
+  icon: https://raw.githubusercontent.com/Orz-3/mini/master/Color/Static.png
+  use:
+    - Texon
+    - MyProxy
+
+- name: Fallback
+  type: fallback
+  icon: https://raw.githubusercontent.com/Orz-3/mini/master/Color/Available.png
+  use:
+    - MyProxy-Fallback
+
+- name: Streaming
+  type: select
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/ForeignMedia.png
+  use:
+    - MyProxy-Streaming
+
+- name: StreamingSE
+  type: select
+  proxies:
+    - DIRECT
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/HKMTMedia.png
+  use:
+    - MyProxy-StreamingSE
+
+- name: Final
+  type: select
+  proxies:
+  - Option
+  - NodeList
+  - DIRECT
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Final.png
+
+#远程规则集合声明
+rule-providers:
+
+# Unbreak 后续规则修正 直连指不应该被去广告分流规则屏蔽的域名、IP等
+  Unbreak-rules:
+    type: http
+    behavior: classical
+    interval: 86400
+    name: Unbreak
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Direct/Direct.yaml
+
+# Apple 服务
+  Apple-rules:
+    type: http
+    behavior: classical
+    interval: 86400
+    name: Apple
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Apple/Apple.yaml
+    
+# AdvertisingDomain 广告
+  AdvertisingDomain-rules:
+    type: http
+    behavior: domain
+    interval: 86400
+    name: AdvertisingDomain
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Advertising/Advertising_Domain.yaml
+    
+# Streaming 国际流媒体服务
+  Netflix-rules:
+    type: http
+    behavior: classical
+    interval: 86400
+    name: Netflix
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Netflix/Netflix.yaml
+    
+  Disney-rules:
+    type: http
+    behavior: classical
+    interval: 86400
+    name: Disney+
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Disney/Disney.yaml
+    
+  YouTube-rules:
+    type: http
+    behavior: classical
+    interval: 86400
+    name: YouTube
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YouTube/YouTube.yaml
+    
+  TikTok-rules:
+    type: http
+    behavior: classical
+    interval: 86400
+    name: TikTok
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TikTok/TikTok.yaml
+    
+  Spotify-rules:
+    type: http
+    behavior: classical
+    interval: 86400
+    name: Spotify
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Spotify/Spotify.yaml
+
+# StreamingSE 中国流媒体服务（面向海外版本）
+  BiliBili-rules:
+    type: http
+    behavior: classical
+    interval: 86400
+    name: BiliBili
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BiliBili/BiliBili.yaml
+
+  iQIYI-rules:
+    type: http
+    behavior: classical
+    interval: 86400
+    name: iQIYI
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/iQIYI/iQIYI.yaml
+
+# GlobalDomain 全球加速
+  GlobalDomain-rules:
+    type: http
+    behavior: domain
+    interval: 86400
+    name: GlobalDomain
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global_Domain.yaml
+
+# China 中国直连
+  China-rules:
+    type: http
+    behavior: classical
+    interval: 86400
+    name: China
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/China/China.yaml
+
+#分流规则引用
+rules:
+- RULE-SET,Unbreak-rules,DIRECT
+- RULE-SET,Apple-rules,DIRECT
+- RULE-SET,AdvertisingDomain-rules,REJECT
+- RULE-SET,Netflix-rules,Streaming
+- RULE-SET,Disney-rules,Streaming
+- RULE-SET,YouTube-rules,Streaming
+- RULE-SET,TikTok-rules,Streaming
+- RULE-SET,Spotify-rules,Streaming
+- RULE-SET,BiliBili-rules,StreamingSE
+- RULE-SET,iQIYI-rules,StreamingSE
+- RULE-SET,GlobalDomain-rules,Option
+- RULE-SET,China-rules,DIRECT
+# Local Area Network 局域网
+- DOMAIN,localhost,DIRECT
+- DOMAIN-SUFFIX,local,DIRECT
+- IP-CIDR,192.168.0.0/16,DIRECT
+- IP-CIDR,10.0.0.0/8,DIRECT
+- IP-CIDR,172.16.0.0/12,DIRECT
+# 抖音本地分流
+- DOMAIN-SUFFIX,snssdk.com,DIRECT
+- DOMAIN-SUFFIX,amemv.com,DIRECT
+# GeoIP China
+- GEOIP,CN,DIRECT
+- MATCH,Final
