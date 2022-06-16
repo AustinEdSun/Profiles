@@ -1,0 +1,35 @@
+#Sub-Store
+https://raw.githubusercontent.com/Peng-YM/Sub-Store/master/config/Surge.sgmodule
+#BoxJs
+https://raw.githubusercontent.com/chavyleung/scripts/master/box/rewrite/boxjs.rewrite.surge.sgmodule
+#去广告 MITM
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Advertising/Advertising_MITM.sgmodule
+#Dualsb字幕翻译聚合版
+https://raw.githubusercontent.com/Neurogram-R/Surge/master/module/Dualsub.sgmodule
+#TestFlight区域限制解除
+https://raw.githubusercontent.com/NobyDa/Script/master/Surge/Module/TestFlightDownload.sgmodule
+#TikTok Unlock
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/external/Surge/TikTokUnlock/TikTokJP.sgmodule
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/external/Surge/TikTokUnlock/TikTokTW.sgmodule
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/external/Surge/TikTokUnlock/TikTokKR.sgmodule
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/external/Surge/TikTokUnlock/TikTokUS.sgmodule
+#Spotify Premuim解锁
+https://raw.githubusercontent.com/app2smile/rules/master/module/spotify.module
+#Bilibili去广告
+https://raw.githubusercontent.com/app2smile/rules/master/module/bilibili.sgmodule
+#贴吧去广告
+https://raw.githubusercontent.com/app2smile/rules/master/module/tieba.sgmodule
+#知乎去广告
+https://raw.githubusercontent.com/app2smile/rules/master/module/zhihu.sgmodule
+#什么值得买去广告
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/script/smzdm/smzdm_remove_ads.sgmodule
+#开屏去广告
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/script/startup/startup.sgmodule
+#General重定向
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rewrite/Surge/Redirect/Redirect.sgmodule
+#Block Advertising
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rewrite/Surge/Advertising/Advertising.sgmodule
+#Block YouTube Ads Youtube premium 会员请勿开启此条
+https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Module/Block/YouTubeAds.sgmodule
+
+
