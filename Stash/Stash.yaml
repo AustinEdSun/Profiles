@@ -1,13 +1,16 @@
 # Stash 配置
 
 # Port of HTTP(S) 本地代理服务器
-#port: 7890
+port: 7890
 
 # Port of SOCKS5 本地代理服务器
-#socks-port: 7891
+socks-port: 7891
+
+# 适用于 Linux 和 macOS 的透明代理服务器端口（Redirect TCP 和 TProxy UDP）
+# redir-port: 7892
 
 # HTTP(S) and SOCKS4(A)/SOCKS5 服务器在同一个端口
-mixed-port: 7890
+# mixed-port: 7893
 
 # 设置为 true 以允许从本地连接到本地服务器
 allow-lan: false
@@ -26,6 +29,9 @@ ipv6: false
 
 # RESTful Web API 监听地址
 external-controller: 127.0.0.1:9090
+
+# Stash获取机场流量信息并在主页显示(Stash1.6.1 build287+支持)
+subscribe-url: https://sub.store/download/collection/Stash
 
 # DNS设置
 dns:
@@ -64,22 +70,18 @@ proxies:
 # 远程订阅(代理集合)
 proxy-providers:
 
-  Texon: 
-    url: 机场订阅地址
-    interval: 86400
-    health-check:
-      enable: true
-      interval: 3600
-      url: http://cp.cloudflare.com/generate_204
-      
   # 手动选择
   MyProxy: &Stash #建立锚点
-     #多机场用户请使用Sub-Store生成自己的订阅地址并替换以下url地址
-    url: https://sub.store/download/collection/Stash
-    interval: 86400
+    type: http
+    url: "https://sub.store/download/collection/Stash"
+    # 多机场用户请使用Sub-Store生成自己的订阅地址并替换以下url地址
+    # 也可以使用任意类型的链接替换url地址，多个链接使用英文符号的竖杠|隔开一起写上即可；
+    # 或者将Clash订阅链接替换掉整个引号""内的链接
+    interval: 3600
+    path: ./proxy_providers/MyProxy.yaml
     health-check:
       enable: true
-      interval: 3600
+      interval: 600
       url: http://cp.cloudflare.com/generate_204
   
   # 故障切换
@@ -87,6 +89,11 @@ proxy-providers:
     <<: *Stash #引用锚点内容
     filter: "香港|HK|Hong Kong|日本|JP|Japan"
   
+  # Netflix
+  MyProxy-Netflix:
+    <<: *Stash #引用锚点内容
+    filter: "新加坡|狮城|SG|Singapore|日本|JP|Japan"
+    
   # 国际流媒体服务
   MyProxy-Streaming:
     <<: *Stash #引用锚点内容
@@ -96,23 +103,52 @@ proxy-providers:
   MyProxy-StreamingSE:
     <<: *Stash #引用锚点内容
     filter: "香港|HK|Hong Kong|台湾|TW|Taiwan"
+    
+  #香港节点
+  MyProxy-HK:
+    <<: *Stash #引用锚点内容
+    filter: "香港|HK|Hong Kong"
+    
+  #台湾节点  
+  MyProxy-TW:
+    <<: *Stash #引用锚点内容
+    filter: "台湾|TW|Taiwan"
+    
+  #新加坡节点  
+  MyProxy-SG:
+    <<: *Stash #引用锚点内容
+    filter: "新加坡|狮城|SG|Singapore"
+    
+  #日本节点  
+  MyProxy-JP:
+    <<: *Stash #引用锚点内容
+    filter: "日本|JP|Japan"
+
+  #美国节点
+  MyProxy-US:
+    <<: *Stash #引用锚点内容
+    filter: "美国|US|United States"
   
 #策略组
 proxy-groups:
 
 - name: Option
   type: select
+  icon: https://raw.githubusercontent.com/Orz-3/mini/master/Color/Urltest.png
   proxies:
+    - 🇭🇰 Hong Kong
+    - 🇨🇳 Taiwan
+    - 🇯🇵 Japan
+    - 🇸🇬 Singapore
+    - 🇺🇸 United States
     - Fallback
     - NodeList
     - DIRECT
-  icon: https://raw.githubusercontent.com/Orz-3/mini/master/Color/Urltest.png
 
 - name: NodeList
   type: select
   icon: https://raw.githubusercontent.com/Orz-3/mini/master/Color/Static.png
   use:
-    - Texon
     - MyProxy
 
 - name: Fallback
@@ -121,142 +157,303 @@ proxy-groups:
   use:
     - MyProxy-Fallback
 
+- name: Netflix
+  type: select
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Netflix.png
+  proxies:
+    - 🇸🇬 Singapore
+    - 🇯🇵 Japan
+  use:
+    - MyProxy-Netflix
+    
 - name: Streaming
   type: select
   icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/ForeignMedia.png
+  proxies:
+    - 🇸🇬 Singapore
+    - 🇭🇰 Hong Kong
+    - 🇯🇵 Japan
   use:
     - MyProxy-Streaming
 
 - name: StreamingSE
   type: select
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/HKMTMedia.png
   proxies:
     - DIRECT
-  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/HKMTMedia.png
+    - 🇭🇰 Hong Kong
+    - 🇨🇳 Taiwan
   use:
     - MyProxy-StreamingSE
 
 - name: AdBlock
   type: select
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Advertising.png
   proxies:
     - REJECT
     - Option
     - DIRECT
-  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Advertising.png
 
 - name: Final
   type: select
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Final.png
   proxies:
     - Option
     - NodeList
     - DIRECT
-  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Final.png
 
+- name: 🇭🇰 Hong Kong
+  type: fallback
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Hong_Kong.png
+  use:
+      - MyProxy-HK
+
+- name: 🇨🇳 Taiwan
+  type: fallback
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/China.png
+  use:
+      - MyProxy-TW
+
+- name: 🇸🇬 Singapore
+  type: fallback
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Singapore.png
+  use:
+      - MyProxy-SG
+
+- name: 🇯🇵 Japan
+  type: fallback
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Japan.png
+  use:
+      - MyProxy-JP
+
+- name: 🇺🇸 United States
+  type: fallback
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/United_States.png
+  use:
+      - MyProxy-US
+      
 #远程规则集合声明
 rule-providers:
 
-# Unbreak 后续规则修正 直连指不应该被去广告分流规则屏蔽的域名、IP等
-  Unbreak-rules:
+# Direct 直连指不应该被去广告分流规则屏蔽的域名、IP等，请将此分流规则置于去广告规则之前。
+  Direct-rules:
     type: http
     behavior: classical
     interval: 86400
-    name: Unbreak
+    name: Direct
     url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Direct/Direct.yaml
-
-# Apple 服务
-  Apple-rules:
-    type: http
-    behavior: classical
-    interval: 86400
-    name: Apple
-    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Apple/Apple.yaml
+    path: ./ruleset/direct.yaml
     
-# AdvertisingDomain 去广告
-  AdvertisingDomain-rules:
+# Advertising 广告
+  # Advertising-rules:
+  #   type: http
+  #   behavior: classical
+  #   interval: 86400
+  #   name: Advertising
+  #   url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Advertising/Advertising.yaml
+  #   path: ./ruleset/Advertising.yaml
+
+  # AdvertisingDomain-rules:
+  #   type: http
+  #   behavior: domain
+  #   interval: 86400
+  #   name: AdvertisingDomain
+  #   url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Advertising/Advertising_Domain.yaml
+  #   path: ./ruleset/AdvertisingDomain.yaml
+    
+  AdvertisingLiteDomain-rules:
     type: http
     behavior: domain
     interval: 86400
-    name: AdvertisingDomain
-    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Advertising/Advertising_Domain.yaml
+    name: AdvertisingLiteDomain
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AdvertisingLite/AdvertisingLite_Domain.yaml
+    path: ./ruleset/AdvertisingLiteDomain.yaml
     
-# Streaming 国际流媒体服务
+# > 海外流媒体
+# Netflix
   Netflix-rules:
     type: http
     behavior: classical
     interval: 86400
     name: Netflix
     url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Netflix/Netflix.yaml
-    
-  Disney-rules:
-    type: http
-    behavior: classical
-    interval: 86400
-    name: Disney+
-    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Disney/Disney.yaml
-    
-  YouTube-rules:
-    type: http
-    behavior: classical
-    interval: 86400
-    name: YouTube
-    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YouTube/YouTube.yaml
-    
-  TikTok-rules:
-    type: http
-    behavior: classical
-    interval: 86400
-    name: TikTok
-    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TikTok/TikTok.yaml
-    
-  Spotify-rules:
-    type: http
-    behavior: classical
-    interval: 86400
-    name: Spotify
-    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Spotify/Spotify.yaml
+    path: ./ruleset/Netflix.yaml
 
-# StreamingSE 中国流媒体服务（面向海外版本）
-  BiliBili-rules:
+# Disney+
+  # Disney-rules:
+  #   type: http
+  #   behavior: classical
+  #   interval: 86400
+  #   name: Disney+
+  #   url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Disney/Disney.yaml
+  #   path: ./ruleset/Disney.yaml
+    
+# HBO
+  # HBO-rules:
+  #   type: http
+  #   behavior: classical
+  #   interval: 86400
+  #   name: HBO
+  #   url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HBO/HBO.yaml
+  #   path: ./ruleset/HBO.yaml
+    
+# YouTube
+  # YouTube-rules:
+  #   type: http
+  #   behavior: classical
+  #   interval: 86400
+  #   name: YouTube
+  #   url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YouTube/YouTube.yaml
+  #   path: ./ruleset/YouTube.yaml
+    
+# Spotify
+  # Spotify-rules:
+  #   type: http
+  #   behavior: classical
+  #   interval: 86400
+  #   name: Spotify
+  #   url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Spotify/Spotify.yaml
+  #   path: ./ruleset/Spotify.yaml
+    
+# TikTok
+  # TikTok-rules:
+  #   type: http
+  #   behavior: classical
+  #   interval: 86400
+  #   name: TikTok
+  #   url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/TikTok/TikTok.yaml
+  #   path: ./ruleset/TikTok.yaml
+
+# Streaming 国际流媒体服务
+  # Streaming-rules:
+  #   type: http
+  #   behavior: classical
+  #   interval: 86400
+  #   name: Streaming
+  #   url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GlobalMedia/GlobalMedia.yaml
+  #   path: ./ruleset/GlobalMedia.yaml
+
+  StreamingDomain-rules:
+    type: http
+    behavior: domain
+    interval: 86400
+    name: StreamingDomain
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GlobalMedia/GlobalMedia_Domain.yaml
+    path: ./ruleset/GlobalMedia_Domain.yaml
+
+# > 港澳台流媒体
+# StreamingSE 中国大陆流媒体服务（面向港澳台或海外版本）
+  StreamingSE-rules:
     type: http
     behavior: classical
     interval: 86400
-    name: BiliBili
-    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BiliBili/BiliBili.yaml
+    name: StreamingSE
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AsianMedia/AsianMedia.yaml
+    path: ./ruleset/AsianMedia.yaml
 
-  iQIYI-rules:
+# > 软件&服务
+# WeChat
+  WeChat-rules:
     type: http
     behavior: classical
     interval: 86400
-    name: iQIYI
-    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/iQIYI/iQIYI.yaml
+    name: WeChat
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/WeChat/WeChat.yaml
+    path: ./ruleset/WeChat.yaml
+    
+# Weibo
+  Weibo-rules:
+    type: http
+    behavior: classical
+    interval: 86400
+    name: Weibo
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Weibo/Weibo.yaml
+    path: ./ruleset/Weibo.yaml
+    
+# Apple
+  Apple-rules:
+    type: http
+    behavior: classical
+    interval: 86400
+    name: Apple
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Apple/Apple.yaml
+    path: ./ruleset/Apple.yaml
+    
+# Microsoft
+  Microsoft-rules:
+    type: http
+    behavior: classical
+    interval: 86400
+    name: Microsoft
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Microsoft/Microsoft.yaml
+    path: ./ruleset/Microsoft.yaml
+    
+# Google
+  Google-rules:
+    type: http
+    behavior: classical
+    interval: 86400
+    name: Google
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Google/Google.yaml
+    path: ./ruleset/Google.yaml
+    
+# Telegram
+  Telegram-rules:
+    type: http
+    behavior: classical
+    interval: 86400
+    name: Telegram
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Telegram/Telegram.yaml
+    path: ./ruleset/Telegram.yaml
 
-# GlobalDomain 全球加速
+# Global 全球加速
+  # Global-rules:
+  #   type: http
+  #   behavior: classical
+  #   interval: 86400
+  #   name: Global
+  #   url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global.yaml
+  #   path: ./ruleset/Global.yaml
+
   GlobalDomain-rules:
     type: http
     behavior: domain
     interval: 86400
     name: GlobalDomain
     url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global_Domain.yaml
+    path: ./ruleset/Global_Domain.yaml
 
-# China 中国直连
+# China 中国大陆直连
   China-rules:
     type: http
     behavior: classical
     interval: 86400
     name: China
     url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/China/China.yaml
+    path: ./ruleset/China.yaml
 
 #分流规则引用
 rules:
-- RULE-SET,Unbreak-rules,DIRECT
+- RULE-SET,Direct-rules,DIRECT
+# - RULE-SET,Advertising-rules,AdBlock
+# - RULE-SET,AdvertisingDomain-rules,AdBlock
+- RULE-SET,AdvertisingLiteDomain-rules,AdBlock
+- RULE-SET,Netflix-rules,Netflix
+# - RULE-SET,Disney-rules,Disney+
+# - RULE-SET,HBO-rules,HBO
+# - RULE-SET,YouTube-rules,YouTube
+# - RULE-SET,Spotify-rules,Spotify
+# - RULE-SET,TikTok-rules,TikTok
+# - RULE-SET,Streaming-rules,Streaming
+- RULE-SET,StreamingDomain-rules,Streaming
+- RULE-SET,StreamingSE-rules,StreamingSE
+- RULE-SET,WeChat-rules,DIRECT
+- RULE-SET,Weibo-rules,DIRECT
 - RULE-SET,Apple-rules,DIRECT
-- RULE-SET,AdvertisingDomain-rules,AdBlock
-- RULE-SET,Netflix-rules,Streaming
-- RULE-SET,Disney-rules,Streaming
-- RULE-SET,YouTube-rules,Streaming
-- RULE-SET,TikTok-rules,Streaming
-- RULE-SET,Spotify-rules,Streaming
-- RULE-SET,BiliBili-rules,StreamingSE
-- RULE-SET,iQIYI-rules,StreamingSE
+- RULE-SET,Microsoft-rules,DIRECT
+- RULE-SET,Google-rules,Option
+- RULE-SET,Telegram-rules,Option
+# - RULE-SET,Global-rules,Option
 - RULE-SET,GlobalDomain-rules,Option
 - RULE-SET,China-rules,DIRECT
 # Local Area Network 局域网
@@ -270,4 +467,4 @@ rules:
 - DOMAIN-SUFFIX,amemv.com,DIRECT
 # GeoIP China
 - GEOIP,CN,DIRECT
-- MATCH,Final
+- MATCH,Fina
