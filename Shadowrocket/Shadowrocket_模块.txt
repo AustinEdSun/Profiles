@@ -8,11 +8,11 @@ https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge
 https://raw.githubusercontent.com/Neurogram-R/Surge/master/module/Dualsub.sgmodule
 #TestFlight区域限制解除
 https://raw.githubusercontent.com/NobyDa/Script/master/Surge/Module/TestFlightDownload.sgmodule
-#TikTok Unlock
-https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/external/Surge/TikTokUnlock/TikTokJP.sgmodule
-https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/external/Surge/TikTokUnlock/TikTokTW.sgmodule
-https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/external/Surge/TikTokUnlock/TikTokKR.sgmodule
-https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/external/Surge/TikTokUnlock/TikTokUS.sgmodule
+	#TikTok Unlock
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/external/Surge/TikTokUnlock/TikTokJP/TikTokJP.sgmodule
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/external/Surge/TikTokUnlock/TikTokTW/TikTokTW.sgmodule
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/external/Surge/TikTokUnlock/TikTokKR/TikTokKR.sgmodule
+https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/external/Surge/TikTokUnlock/TikTokUS/TikTokUS.sgmodule
 #Spotify Premuim解锁
 https://raw.githubusercontent.com/app2smile/rules/master/module/spotify.module
 #Bilibili去广告
