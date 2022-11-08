@@ -203,31 +203,31 @@ proxy-groups:
     - DIRECT
 
 - name: 🇭🇰 Hong Kong
-  type: fallback
+  type: select
   icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Hong_Kong.png
   use:
       - MyProxy-HK
 
 - name: 🇨🇳 Taiwan
-  type: fallback
+  type: select
   icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/China.png
   use:
       - MyProxy-TW
 
 - name: 🇸🇬 Singapore
-  type: fallback
+  type: select
   icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Singapore.png
   use:
       - MyProxy-SG
 
 - name: 🇯🇵 Japan
-  type: fallback
+  type: select
   icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Japan.png
   use:
       - MyProxy-JP
 
 - name: 🇺🇸 United States
-  type: fallback
+  type: select
   icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/United_States.png
   use:
       - MyProxy-US
@@ -462,9 +462,11 @@ rules:
 - IP-CIDR,192.168.0.0/16,DIRECT
 - IP-CIDR,10.0.0.0/8,DIRECT
 - IP-CIDR,172.16.0.0/12,DIRECT
+# SubStore
+- DOMAIN-SUFFIX,vercel.app,Final
 # 抖音本地分流
 - DOMAIN-SUFFIX,snssdk.com,DIRECT
 - DOMAIN-SUFFIX,amemv.com,DIRECT
 # GeoIP China
 - GEOIP,CN,DIRECT
-- MATCH,Fina
+- MATCH,Final
