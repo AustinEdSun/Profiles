@@ -148,7 +148,7 @@ panel_result['content'] = content
   
     let netflix_check_result = 'Netflix: '
   
-    await inner_check(81215567)
+    await inner_check(80062035)
       .then((code) => {
         if (code === 'Not Found') {
           return inner_check(80018499)
@@ -296,7 +296,7 @@ panel_result['content'] = content
               reject('Error')
               return
             }
-            if (response.status !== 200 || data.indexOf('unavailable') !== -1) {
+            if (response.status !== 200 || data.indexOf('Sorry, Disney+ is not available in your region.') !== -1) {
               reject('Not Available')
               return
             }
